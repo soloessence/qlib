@@ -7,7 +7,7 @@ from pathlib import Path
 
 import qlib
 import fire
-import ruamel.yaml as yaml
+from ruamel.yaml import YAML
 from qlib.config import C
 from qlib.model.trainer import task_train
 from qlib.utils.data import update_config
@@ -68,7 +68,9 @@ def workflow(config_path, experiment_name="workflow", uri_folder="mlruns"):
 
     """
     with open(config_path) as fp:
-        config = yaml.safe_load(fp)
+        yaml = YAML(type='rt')
+        config = yaml.load(fp)
+
 
     base_config_path = config.get("BASE_CONFIG_PATH", None)
     if base_config_path:
@@ -90,7 +92,9 @@ def workflow(config_path, experiment_name="workflow", uri_folder="mlruns"):
                 raise FileNotFoundError(f"Can't find the BASE_CONFIG file: {base_config_path}")
 
         with open(path) as fp:
-            base_config = yaml.safe_load(fp)
+            yaml = YAML(type='rt')
+            base_config = yaml.load(fp)
+
         logger.info(f"Load BASE_CONFIG_PATH succeed: {path.resolve()}")
         config = update_config(base_config, config)
 
